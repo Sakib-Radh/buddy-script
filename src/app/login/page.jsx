@@ -1,6 +1,32 @@
+'use client';
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { login } from '@/lib/apiCall';
 
 export default function Login() {
+  const router = useRouter();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+    try {
+      await login({ email, password });
+      router.push('/feed');
+      router.refresh();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <section className="_social_login_wrapper _layout_main_wrapper">
       <div className="_shape_one">
@@ -37,18 +63,28 @@ export default function Login() {
                 </button>
                 <div className="_social_login_content_bottom_txt _mar_b40"> <span>Or</span>
                 </div>
-                <form className="_social_login_form">
+                <form className="_social_login_form" onSubmit={handleSubmit}>
                   <div className="row">
                     <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                       <div className="_social_login_form_input _mar_b14">
                         <label className="_social_login_label _mar_b8">Email</label>
-                        <input type="email" className="form-control _social_login_input" />
+                        <input
+                          type="email"
+                          className="form-control _social_login_input"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                        />
                       </div>
                     </div>
                     <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                       <div className="_social_login_form_input _mar_b14">
                         <label className="_social_login_label _mar_b8">Password</label>
-                        <input type="password" className="form-control _social_login_input" />
+                        <input
+                          type="password"
+                          className="form-control _social_login_input"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                        />
                       </div>
                     </div>
                   </div>
@@ -65,10 +101,19 @@ export default function Login() {
                       </div>
                     </div>
                   </div>
+                  {error && (
+                    <div className="row">
+                      <div className="col-xl-12">
+                        <p className="_social_login_error" style={{ color: '#e74c3c' }}>{error}</p>
+                      </div>
+                    </div>
+                  )}
                   <div className="row">
                     <div className="col-lg-12 col-md-12 col-xl-12 col-sm-12">
                       <div className="_social_login_form_btn _mar_t40 _mar_b60">
-                        <button type="button" className="_social_login_form_btn_link _btn1">Login now</button>
+                        <button type="submit" className="_social_login_form_btn_link _btn1" disabled={loading}>
+                          {loading ? 'Logging in...' : 'Login now'}
+                        </button>
                       </div>
                     </div>
                   </div>

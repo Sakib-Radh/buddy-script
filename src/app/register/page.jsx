@@ -1,6 +1,40 @@
+'use client';
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { register } from '@/lib/apiCall';
 
 export default function Register() {
+  const router = useRouter();
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setError('');
+
+    if (password !== confirmPassword) {
+      setError('Passwords do not match.');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await register({ firstName, lastName, email, password });
+      router.push('/login');
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <section className="_social_registration_wrapper _layout_main_wrapper">
       <div className="_shape_one">
@@ -40,24 +74,61 @@ export default function Register() {
                 </button>
                 <div className="_social_registration_content_bottom_txt _mar_b40"> <span>Or</span>
                 </div>
-                <form className="_social_registration_form">
+                <form className="_social_registration_form" onSubmit={handleSubmit}>
                   <div className="row">
+                    <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                      <div className="_social_registration_form_input _mar_b14">
+                        <label className="_social_registration_label _mar_b8">First Name</label>
+                        <input
+                          type="text"
+                          className="form-control _social_registration_input"
+                          value={firstName}
+                          onChange={(e) => setFirstName(e.target.value)}
+                        />
+                      </div>
+                    </div>
+                    <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                      <div className="_social_registration_form_input _mar_b14">
+                        <label className="_social_registration_label _mar_b8">Last Name</label>
+                        <input
+                          type="text"
+                          className="form-control _social_registration_input"
+                          value={lastName}
+                          onChange={(e) => setLastName(e.target.value)}
+                        />
+                      </div>
+                    </div>
                     <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                       <div className="_social_registration_form_input _mar_b14">
                         <label className="_social_registration_label _mar_b8">Email</label>
-                        <input type="email" className="form-control _social_registration_input" />
+                        <input
+                          type="email"
+                          className="form-control _social_registration_input"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                        />
                       </div>
                     </div>
                     <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                       <div className="_social_registration_form_input _mar_b14">
                         <label className="_social_registration_label _mar_b8">Password</label>
-                        <input type="password" className="form-control _social_registration_input" />
+                        <input
+                          type="password"
+                          className="form-control _social_registration_input"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                        />
                       </div>
                     </div>
                     <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                       <div className="_social_registration_form_input _mar_b14">
                         <label className="_social_registration_label _mar_b8">Repeat Password</label>
-                        <input type="password" className="form-control _social_registration_input" />
+                        <input
+                          type="password"
+                          className="form-control _social_registration_input"
+                          value={confirmPassword}
+                          onChange={(e) => setConfirmPassword(e.target.value)}
+                        />
                       </div>
                     </div>
                   </div>
@@ -69,10 +140,19 @@ export default function Register() {
                       </div>
                     </div>
                   </div>
+                  {error && (
+                    <div className="row">
+                      <div className="col-xl-12">
+                        <p className="_social_registration_error" style={{ color: '#e74c3c' }}>{error}</p>
+                      </div>
+                    </div>
+                  )}
                   <div className="row">
                     <div className="col-lg-12 col-md-12 col-xl-12 col-sm-12">
                       <div className="_social_registration_form_btn _mar_t40 _mar_b60">
-                        <button type="button" className="_social_registration_form_btn_link _btn1">Register now</button>
+                        <button type="submit" className="_social_registration_form_btn_link _btn1" disabled={loading}>
+                          {loading ? 'Creating account...' : 'Register now'}
+                        </button>
                       </div>
                     </div>
                   </div>
