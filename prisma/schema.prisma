@@ -13,13 +13,15 @@ enum Visibility {
 }
 
 model User {
-  id           String   @id @default(cuid())
+  id           String    @id @default(cuid())
   firstName    String
   lastName     String
-  email        String   @unique
+  email        String    @unique
   passwordHash String
-  createdAt    DateTime @default(now())
+  createdAt    DateTime  @default(now())
   posts        Post[]
+  likes        Like[]
+  comments     Comment[]
 }
 
 model Post {
@@ -30,7 +32,44 @@ model Post {
   imageUrl   String?
   visibility Visibility @default(PUBLIC)
   createdAt  DateTime   @default(now())
+  likes      Like[]
+  comments   Comment[]
 
   @@index([createdAt])
   @@index([authorId, createdAt])
+}
+
+model Comment {
+  id        String    @id @default(cuid())
+  post      Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId    String
+  author    User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId  String
+  content   String
+  // Self-relation: a reply is a Comment whose parent is another Comment.
+  parent    Comment?  @relation("Replies", fields: [parentId], references: [id], onDelete: Cascade)
+  parentId  String?
+  replies   Comment[] @relation("Replies")
+  createdAt DateTime  @default(now())
+  likes     Like[]
+
+  @@index([postId, createdAt])
+  @@index([parentId])
+}
+
+model Like {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  // A like targets exactly one of a post or a comment; the other stays null.
+  post      Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId    String?
+  comment   Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  commentId String?
+  createdAt DateTime @default(now())
+
+  @@unique([userId, postId])
+  @@unique([userId, commentId])
+  @@index([postId])
+  @@index([commentId])
 }

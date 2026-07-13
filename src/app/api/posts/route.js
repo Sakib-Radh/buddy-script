@@ -78,8 +78,10 @@ export async function POST(request) {
         },
       },
     });
-
-    return NextResponse.json({ post }, { status: 201 });
+    return NextResponse.json(
+      { post: { ...post, likeCount: 0, commentCount: 0, likedByMe: false } },
+      { status: 201 }
+    );
   } catch (err) {
     console.error('Post create failed:', err);
     return NextResponse.json({ error: 'Could not create the post.' }, { status: 500 });
