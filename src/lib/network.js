@@ -16,3 +16,18 @@ export async function request(method, endpoint, payload) {
   }
   return data;
 }
+
+export async function upload(endpoint, formData) {
+  let res;
+  try {
+    res = await fetch(endpoint, { method: 'POST', body: formData });
+  } catch {
+    throw new Error('Could not reach the server. Please try again.');
+  }
+
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    throw new Error(data.error || 'Something went wrong.');
+  }
+  return data;
+}

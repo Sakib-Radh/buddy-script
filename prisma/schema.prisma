@@ -7,6 +7,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Visibility {
+  PUBLIC
+  PRIVATE
+}
+
 model User {
   id           String   @id @default(cuid())
   firstName    String
@@ -14,4 +19,18 @@ model User {
   email        String   @unique
   passwordHash String
   createdAt    DateTime @default(now())
+  posts        Post[]
+}
+
+model Post {
+  id         String     @id @default(cuid())
+  author     User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId   String
+  content    String
+  imageUrl   String?
+  visibility Visibility @default(PUBLIC)
+  createdAt  DateTime   @default(now())
+
+  @@index([createdAt])
+  @@index([authorId, createdAt])
 }
