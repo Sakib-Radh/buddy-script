@@ -56,9 +56,14 @@ export default function Post({ post }) {
             )}
           </div>
           {commentCount > 0 && (
-            <div className="_feed_inner_timeline_total_reacts_para2">
+            <button
+              type="button"
+              onClick={() => setCommentsOpen((o) => !o)}
+              className="_feed_inner_timeline_total_reacts_para2"
+              style={{ border: 'none', background: 'transparent', cursor: 'pointer', padding: 0 }}
+            >
               <span>{commentCount}</span> {commentCount === 1 ? 'comment' : 'comments'}
-            </div>
+            </button>
           )}
         </div>
       )}
