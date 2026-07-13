@@ -4,12 +4,31 @@ import { useState } from 'react';
 import Composer from '@/components/Composer';
 import Post from '@/components/Post';
 import LogoutButton from '@/components/LogoutButton';
+import { getPosts } from '@/lib/apiCall';
 
-export default function FeedClient({ user }) {
-  const [posts, setPosts] = useState([]);
+export default function FeedClient({ user, initialPosts = [], initialCursor = null }) {
+  const [posts, setPosts] = useState(initialPosts);
+  const [cursor, setCursor] = useState(initialCursor);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [error, setError] = useState('');
 
   function handleCreated(post) {
     setPosts((prev) => [post, ...prev]);
+  }
+
+  async function loadMore() {
+    if (!cursor || loadingMore) return;
+    setLoadingMore(true);
+    setError('');
+    try {
+      const { posts: more, nextCursor } = await getPosts(cursor);
+      setPosts((prev) => [...prev, ...more]);
+      setCursor(nextCursor);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoadingMore(false);
+    }
   }
 
   return (
@@ -52,6 +71,23 @@ export default function FeedClient({ user }) {
               </div>
             ) : (
               posts.map((post) => <Post key={post.id} post={post} />)
+            )}
+
+            {error && (
+              <p style={{ color: '#e74c3c', fontSize: '14px', textAlign: 'center' }}>{error}</p>
+            )}
+
+            {cursor && (
+              <div style={{ textAlign: 'center', margin: '8px 0 0 0' }}>
+                <button
+                  type="button"
+                  className="_btn1"
+                  onClick={loadMore}
+                  disabled={loadingMore}
+                >
+                  {loadingMore ? 'Loading...' : 'Load more'}
+                </button>
+              </div>
             )}
           </div>
         </div>

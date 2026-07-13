@@ -2,6 +2,25 @@ import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getCurrentUser } from '@/lib/session';
 import { uploadImage } from '@/lib/upload';
+import { getFeedPosts } from '@/lib/posts';
+
+export async function GET(request) {
+  const user = await getCurrentUser();
+  if (!user) {
+    return NextResponse.json({ error: 'Not authenticated.' }, { status: 401 });
+  }
+
+  const { searchParams } = new URL(request.url);
+  const cursor = searchParams.get('cursor') || undefined;
+
+  try {
+    const { posts, nextCursor } = await getFeedPosts({ userId: user.id, cursor });
+    return NextResponse.json({ posts, nextCursor });
+  } catch (err) {
+    console.error('Feed fetch failed:', err);
+    return NextResponse.json({ error: 'Could not load the feed.' }, { status: 500 });
+  }
+}
 
 export async function POST(request) {
   const user = await getCurrentUser();

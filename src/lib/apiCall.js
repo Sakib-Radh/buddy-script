@@ -15,3 +15,8 @@ export function logout() {
 export function createPost(formData) {
   return upload('/api/posts', formData);
 }
+
+export function getPosts(cursor) {
+  const qs = cursor ? `?cursor=${encodeURIComponent(cursor)}` : '';
+  return request('GET', `/api/posts${qs}`);
+}
