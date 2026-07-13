@@ -1,6 +1,7 @@
 ::-webkit-scrollbar {
     display: none;
 }
+
 * {
     margin: 0px;
     padding: 0px;
@@ -114,14 +115,14 @@ ul {
     --color5: #1890FF;
     --color6: #212121;
     --color7: #666666;
-    --color8:#0ACF83;
-    --color9:#e8f4ff;
+    --color8: #0ACF83;
+    --color9: #e8f4ff;
     --bg1: #F0F2F5;
     --bg2: #FFFFFF;
     --bg3: #F5F5F5;
-    --bg4:#DFDFDF;
-    --bg5:#112032;
-    --bg6:#232E42;
+    --bg4: #DFDFDF;
+    --bg5: #112032;
+    --bg6: #232E42;
     --b-shadow1: 7.5px 20px 7.5px 20px rgba(108, 126, 147, 0.15);
     --b-shadow2: 7.43px 49.03px 7.5px 49.03px rgba(108, 126, 147, 0.1);
     --b-shadow3: 7px 42px 7px 42px rgba(108, 126, 147, 0.15);
@@ -192,7 +193,7 @@ ul {
     font-size: 20px;
     line-height: 1.4;
     color: var(--color6);
-    margin:0;
+    margin: 0;
 }
 
 
@@ -205,10 +206,11 @@ ul {
     width: 424px;
     height: 40px;
     padding: 7px 47px;
-    transition:.2s all ease;
+    transition: .2s all ease;
 }
+
 ._inpt1:hover {
-    border:1px solid var(--color5);
+    border: 1px solid var(--color5);
 }
 
 /*INPUT PLACEHOLDER*/
@@ -240,7 +242,7 @@ ul {
 /*Button*/
 
 ._btn1 {
-    padding: 12px 116px;
+    padding: 12px 100px;
     background: var(--color5);
     border: 1px solid transparent;
     border-radius: 6px;
